@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Response } from 'express';
 import httpStatus from 'http-status';
 import { AuthenticatedRequest } from '@/middlewares';
@@ -33,10 +34,10 @@ export async function getAddressFromCEP(req: AuthenticatedRequest, res: Response
   try {
     const address = await enrollmentsService.getAddressFromCEP(CEP);
 
-    return res.status(httpStatus.OK).send(address);
+    return res.status(200).send(address);
   } catch (error) {
     if (error.name === 'NotFoundError') {
-      return res.send(httpStatus.NO_CONTENT);
+      return res.sendStatus(httpStatus.NO_CONTENT);
     }
   }
 }
