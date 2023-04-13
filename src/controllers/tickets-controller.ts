@@ -2,6 +2,7 @@ import { Response } from 'express';
 import httpStatus from 'http-status';
 import { AuthenticatedRequest } from '@/middlewares';
 import ticketsService from '@/services/tickets-service';
+import { Ticket } from '@/protocols';
 
 export async function getTicketTypes(req: AuthenticatedRequest, res: Response) {
   try {
@@ -21,5 +22,21 @@ export async function getUserTickets(req: AuthenticatedRequest, res: Response) {
     return res.status(httpStatus.OK).send(userTickets);
   } catch (error) {
     return res.sendStatus(httpStatus.NOT_FOUND);
+  }
+}
+
+export async function createTicket(req: AuthenticatedRequest, res: Response) {
+  const { ticketTypeId } = req.body as Pick<Ticket, 'ticketTypeId'>;
+  const { userId } = req;
+
+  try {
+    const ticket = await ticketsService.createTicket(userId, ticketTypeId);
+    return res.status(httpStatus.CREATED).send(ticket);
+  } catch (error) {
+    if (error.name === 'NotFoundError') {
+      return res.sendStatus(httpStatus.NOT_FOUND);
+    }
+    console.log(error);
+    return res.sendStatus(httpStatus.BAD_REQUEST);
   }
 }
