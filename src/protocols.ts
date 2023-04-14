@@ -47,3 +47,13 @@ export type Ticket = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export type Payment = {
+  id: number;
+  ticketId: number;
+  value: number;
+  cardIssuer: string; //VISA | MASTERCARD
+  cardLastDigits: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
