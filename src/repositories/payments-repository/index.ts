@@ -23,8 +23,25 @@ async function findPayment(ticketId: number): Promise<Payment> {
   return returnObject;
 }
 
+async function checkOwnerTicket(ticketId: number) {
+  return await prisma.ticket.findFirst({
+    where: {
+      id: ticketId,
+    },
+    include: {
+      TicketType: true,
+      Enrollment: {
+        select: {
+          userId: true,
+        },
+      },
+    },
+  });
+}
+
 const paymentsRepository = {
   findPayment,
+  checkOwnerTicket,
 };
 
 export default paymentsRepository;

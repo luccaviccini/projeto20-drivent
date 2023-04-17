@@ -1,13 +1,20 @@
-import { notFoundError } from '@/errors';
+import { notFoundError, unauthorizedError } from '@/errors';
 import { Payment } from '@/protocols';
 import paymentsRepository from '@/repositories/payments-repository';
 import ticketsRepository from '@/repositories/tickets-repository';
 
-async function getPayment(ticketId: number): Promise<Payment> {
+async function getPayment(ticketId: number, userId: number): Promise<Payment> {
   const ticket = await ticketsRepository.getTicketbyId(ticketId);
   console.log('TICKET:');
   console.log(ticket);
   if (!ticket) throw notFoundError();
+
+  const { Enrollment } = await paymentsRepository.checkOwnerTicket(ticketId);
+  console.log('ENROLLMENT:');
+  console.log(Enrollment);
+  const checkOwner = Enrollment.userId === userId;
+
+  if (!checkOwner) throw unauthorizedError();
 
   const payment = await paymentsRepository.findPayment(ticketId);
 
