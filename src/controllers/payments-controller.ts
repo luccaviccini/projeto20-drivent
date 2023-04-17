@@ -1,19 +1,18 @@
-import { Response } from 'express';
+import { Response, NextFunction } from 'express';
 import httpStatus from 'http-status';
 import { AuthenticatedRequest } from '@/middlewares';
 import { Payment } from '@/protocols';
 import paymentsService from '@/services/payments-service';
 
-export async function getPayments(req: AuthenticatedRequest, res: Response) {
-  const ticketId = req.query.ticketId as unknown as number;
-  console.log(ticketId);
+export async function getPayments(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  const ticketId = req.query.ticketId as string;
   if (!ticketId) return res.sendStatus(httpStatus.BAD_REQUEST);
 
   try {
-    const payment = await paymentsService.getPayment(ticketId);
+    const payment = await paymentsService.getPayment(Number(ticketId));
     return res.status(httpStatus.OK).send(payment);
   } catch (error) {
-    return res.sendStatus(httpStatus.NO_CONTENT);
+    next(error);
   }
 }
 

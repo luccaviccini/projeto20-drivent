@@ -5,12 +5,14 @@ import ticketsRepository from '@/repositories/tickets-repository';
 
 async function getPayment(ticketId: number): Promise<Payment> {
   const ticket = await ticketsRepository.getTicketbyId(ticketId);
-  console.log('TICKET');
+  console.log('TICKET:');
   console.log(ticket);
   if (!ticket) throw notFoundError();
 
   const payment = await paymentsRepository.findPayment(ticketId);
+
   if (!payment) throw notFoundError();
+
   return payment;
 }
 
