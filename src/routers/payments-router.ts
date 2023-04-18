@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { authenticateToken, validateBody } from '@/middlewares';
+import { authenticateToken } from '@/middlewares';
 import { getPayments, paymentsProcess } from '@/controllers/payments-controller';
 
 const paymentsRouter = Router();

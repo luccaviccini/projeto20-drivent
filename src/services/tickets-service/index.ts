@@ -2,7 +2,6 @@ import { notFoundError } from '@/errors';
 import { TicketType, Ticket } from '@/protocols';
 import enrollmentRepository from '@/repositories/enrollment-repository';
 import ticketsRepository from '@/repositories/tickets-repository';
-import { request } from '@/utils/request';
 
 async function getTicketTypes(): Promise<TicketType[]> {
   const result = await ticketsRepository.getTicketTypes();

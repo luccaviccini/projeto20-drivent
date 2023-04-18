@@ -6,18 +6,38 @@ async function getTicketTypes(): Promise<TicketType[]> {
   return prisma.ticketType.findMany();
 }
 
-async function getTicketbyId(ticketId: number) {
-  const ticket = prisma.ticket.findFirst({
+async function getTicketbyId(ticketId: number): Promise<Ticket> {
+  const ticket = await prisma.ticket.findFirst({
     where: {
       id: ticketId,
+    },
+    include: {
+      TicketType: true,
     },
   });
 
   if (!ticket) {
     return null;
   }
+  const result: Ticket = {
+    id: ticket.id,
+    status: ticket.status,
+    ticketTypeId: ticket.ticketTypeId,
+    enrollmentId: ticket.enrollmentId,
+    TicketType: {
+      id: ticket.TicketType.id,
+      name: ticket.TicketType.name,
+      price: ticket.TicketType.price,
+      isRemote: ticket.TicketType.isRemote,
+      includesHotel: ticket.TicketType.includesHotel,
+      createdAt: ticket.TicketType.createdAt,
+      updatedAt: ticket.TicketType.updatedAt,
+    },
+    createdAt: ticket.createdAt,
+    updatedAt: ticket.updatedAt,
+  };
 
-  return ticket;
+  return result;
 }
 
 async function getUserTickets(enrollmentId: number): Promise<Ticket> {

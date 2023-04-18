@@ -3,27 +3,22 @@ import { Payment, PaymentsProcessType, Ticket, CardData } from '@/protocols';
 import paymentsRepository from '@/repositories/payments-repository';
 import ticketsRepository from '@/repositories/tickets-repository';
 
-async function checkTicketOwner(ticketId: number, userId: number) {
+async function findTicketAndValidate(ticketId: number, userId: number) {
   const ticket = await ticketsRepository.getTicketbyId(ticketId);
-
   if (!ticket) throw notFoundError();
 
   const { Enrollment } = await paymentsRepository.checkOwnerTicket(ticketId);
 
   const checkOwner = Enrollment.userId === userId;
-
   if (!checkOwner) throw unauthorizedError();
 
   return ticket;
 }
 
 async function getPayment(ticketId: number, userId: number): Promise<Payment> {
-  const ticket = await checkTicketOwner(ticketId, userId);
-
+  await findTicketAndValidate(ticketId, userId);
   const payment = await paymentsRepository.findPayment(ticketId);
-
   if (!payment) throw notFoundError();
-
   return payment;
 }
 
@@ -31,22 +26,6 @@ async function validateInputs(ticketId: number, cardData: CardData): Promise<voi
   if (!ticketId || !cardData) {
     throw invalidDataError(['ticket Id and card Data must be provided']);
   }
-}
-
-async function findTicketAndValidate(ticketId: number, userId: number) {
-  const ticketExists = await ticketsRepository.getTicketbyId(ticketId);
-  if (!ticketExists) throw notFoundError();
-
-  const { Enrollment } = await paymentsRepository.checkOwnerTicket(ticketId);
-
-  const checkOwner = Enrollment.userId === userId;
-  if (!checkOwner) throw unauthorizedError();
-
-  const ticket = await ticketsRepository.getUserTickets(Enrollment.id);
-
-  if (!ticket) throw notFoundError();
-
-  return ticket;
 }
 
 async function buildPaymentObject(
@@ -62,8 +41,6 @@ async function buildPaymentObject(
 }
 
 async function paymentsProcess({ ticketId, cardData, userId }: PaymentsProcessType) {
-  console.log('ticketId: ', ticketId);
-  console.log('cardData: ', cardData);
   await validateInputs(ticketId, cardData);
   const ticket = await findTicketAndValidate(ticketId, userId);
   const payment = await buildPaymentObject(ticket, cardData);

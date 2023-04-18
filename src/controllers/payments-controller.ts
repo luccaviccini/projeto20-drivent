@@ -4,7 +4,7 @@ import { AuthenticatedRequest } from '@/middlewares';
 import { PaymentsProcessType } from '@/protocols';
 import paymentsService from '@/services/payments-service';
 
-export async function getPayments(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+export async function getPayments(req: AuthenticatedRequest, res: Response) {
   const ticketId = req.query.ticketId as string;
   const { userId }: { userId: number } = req;
   if (!ticketId) return res.sendStatus(httpStatus.BAD_REQUEST);
@@ -25,7 +25,7 @@ export async function getPayments(req: AuthenticatedRequest, res: Response, next
   }
 }
 
-export async function paymentsProcess(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+export async function paymentsProcess(req: AuthenticatedRequest, res: Response) {
   const { userId }: { userId: number } = req;
   const { ticketId, cardData }: PaymentsProcessType = req.body;
   try {
