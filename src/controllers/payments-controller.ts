@@ -1,7 +1,7 @@
 import { Response, NextFunction } from 'express';
 import httpStatus from 'http-status';
 import { AuthenticatedRequest } from '@/middlewares';
-import { Payment } from '@/protocols';
+import { PaymentsProcessType } from '@/protocols';
 import paymentsService from '@/services/payments-service';
 
 export async function getPayments(req: AuthenticatedRequest, res: Response, next: NextFunction) {
@@ -25,10 +25,21 @@ export async function getPayments(req: AuthenticatedRequest, res: Response, next
   }
 }
 
-export async function postPaymentsProcess(req: AuthenticatedRequest, res: Response) {
+export async function paymentsProcess(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  const { userId }: { userId: number } = req;
+  const { ticketId, cardData }: PaymentsProcessType = req.body;
   try {
-    return res.status(httpStatus.OK).send();
+    const payment = await paymentsService.paymentsProcess({ ticketId, cardData, userId });
+    return res.status(httpStatus.OK).send(payment);
   } catch (error) {
-    return res.sendStatus(httpStatus.NO_CONTENT);
+    switch (error.name) {
+      case 'NotFoundError':
+        return res.status(httpStatus.NOT_FOUND).send(error.message);
+      case 'UnauthorizedError':
+        return res.status(httpStatus.UNAUTHORIZED).send(error.message);
+      default:
+        console.log(error);
+        return res.status(httpStatus.BAD_REQUEST).send(error.message);
+    }
   }
 }

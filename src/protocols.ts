@@ -57,3 +57,19 @@ export type Payment = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+// Define CardData type
+export type CardData = {
+  issuer: string;
+  number: number;
+  name: string;
+  expirationDate: string;
+  cvv: number;
+};
+
+// Update PaymentsProcessType
+export type PaymentsProcessType = {
+  ticketId: number;
+  userId?: number;
+  cardData: CardData;
+};

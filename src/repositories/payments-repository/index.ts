@@ -1,3 +1,4 @@
+import { TicketStatus } from '@prisma/client';
 import { prisma } from '@/config';
 import { notFoundError } from '@/errors';
 import { Payment } from '@/protocols';
@@ -32,6 +33,7 @@ async function checkOwnerTicket(ticketId: number) {
       TicketType: true,
       Enrollment: {
         select: {
+          id: true,
           userId: true,
         },
       },
@@ -39,9 +41,33 @@ async function checkOwnerTicket(ticketId: number) {
   });
 }
 
+async function createPayment(payment: Omit<Payment, 'id' | 'createdAt' | 'updatedAt'>) {
+  const { ticketId, value, cardIssuer, cardLastDigits } = payment;
+
+  try {
+    await prisma.ticket.update({
+      where: { id: ticketId },
+      data: { status: TicketStatus.PAID },
+    });
+
+    return await prisma.payment.create({
+      data: {
+        ticketId,
+        value,
+        cardIssuer,
+        cardLastDigits,
+      },
+    });
+  } catch (error) {
+    console.error('Error creating payment:', error);
+    throw error;
+  }
+}
+
 const paymentsRepository = {
   findPayment,
   checkOwnerTicket,
+  createPayment,
 };
 
 export default paymentsRepository;
