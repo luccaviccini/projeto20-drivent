@@ -22,3 +22,14 @@ export async function createTicket(enrollmentId: number, ticketTypeId: number, s
     },
   });
 }
+
+export async function createPaidTicketType() {
+  return prisma.ticketType.create({
+    data: {
+      name: `Paid Ticket - ${faker.commerce.productAdjective()} ${faker.commerce.department()}`,
+      price: faker.datatype.number({ min: 50, max: 5000 }),
+      isRemote: false,
+      includesHotel: true,
+    },
+  });
+}
