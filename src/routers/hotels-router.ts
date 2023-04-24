@@ -1,9 +1,13 @@
 import { Router } from 'express';
-import { authenticateToken } from '@/middlewares';
-//import { getAllHotels, getHotelById } from '@/controllers/hotels-controller';
+import { authenticateToken, validateParams } from '@/middlewares';
+import { getAllHotels, getHotelRoomsById } from '@/controllers/hotels-controller';
+import { HotelIdParamsSchema } from '@/schemas/hotels-schemas';
 
 const hotelsRouter = Router();
 
-hotelsRouter.all('*/', authenticateToken).get('/').get('/:id');
+hotelsRouter
+  .all('*/', authenticateToken)
+  .get('/', getAllHotels)
+  .get('/:id', validateParams(HotelIdParamsSchema), getHotelRoomsById);
 
 export { hotelsRouter };

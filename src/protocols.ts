@@ -1,3 +1,5 @@
+import { Hotel } from '@prisma/client';
+
 export type ApplicationError = {
   name: string;
   message: string;
@@ -73,3 +75,5 @@ export type PaymentsProcessType = {
   userId?: number;
   cardData: CardData;
 };
+
+export type HotelIdParams = Pick<Hotel, 'id'>;
