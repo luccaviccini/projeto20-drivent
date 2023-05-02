@@ -1,6 +1,6 @@
 import { Booking } from '.prisma/client';
 import { notFoundError, forbiddenError } from '@/errors';
-import { bookingsRepository } from '@/repositories/bookings-respository';
+import { bookingsRepository } from '@/repositories/booking-respository';
 import enrollmentRepository from '@/repositories/enrollment-repository';
 import hotelsRepository from '@/repositories/hotels-repository';
 import ticketsRepository from '@/repositories/tickets-repository';

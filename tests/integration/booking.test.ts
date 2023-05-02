@@ -15,7 +15,7 @@ import {
   createRemoteTicketType,
 } from '../factories';
 import { cleanDb, generateValidToken } from '../helpers';
-import { createBooking } from '../factories/bookings-factory';
+import { createBooking } from '../factories/booking-factory';
 import app, { init } from '@/app';
 
 beforeAll(async () => {
