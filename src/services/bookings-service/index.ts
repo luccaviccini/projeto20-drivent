@@ -5,7 +5,7 @@ import enrollmentRepository from '@/repositories/enrollment-repository';
 import hotelsRepository from '@/repositories/hotels-repository';
 import ticketsRepository from '@/repositories/tickets-repository';
 
-async function verifyEnrollmentAndPaidTicket(userId: number) {
+async function verifyEnrollmentAndPaidTicket(userId: number): Promise<void> {
   const enrollment = await enrollmentRepository.findEnrollment(userId);
   if (!enrollment) throw notFoundError();
 
@@ -18,7 +18,7 @@ async function verifyEnrollmentAndPaidTicket(userId: number) {
   return;
 }
 
-async function createBooking(userId: number, roomId: number) {
+async function createBooking(userId: number, roomId: number): Promise<Booking> {
   await verifyEnrollmentAndPaidTicket(userId);
 
   const room = await hotelsRepository.getRoomWithBookings(roomId);
@@ -31,6 +31,16 @@ async function createBooking(userId: number, roomId: number) {
   return booking;
 }
 
+async function getBooking(userId: number) {
+  await verifyEnrollmentAndPaidTicket(userId);
+
+  const booking = await bookingsRepository.getBooking(userId);
+  if (!booking) throw notFoundError();
+
+  return booking;
+}
+
 export const bookingsService = {
   createBooking,
+  getBooking,
 };
