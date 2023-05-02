@@ -21,7 +21,30 @@ async function getBooking(userId: number): Promise<Booking & { Room: Room }> {
   });
 }
 
+async function getBookingByUser(userId: number, bookingId: number): Promise<Booking> {
+  return await prisma.booking.findFirst({
+    where: {
+      userId,
+      id: bookingId,
+    },
+  });
+}
+
+async function updateBooking(userId: number, bookingId: number, roomId: number): Promise<Booking> {
+  return await prisma.booking.update({
+    where: {
+      id: bookingId,
+    },
+    data: {
+      userId,
+      roomId,
+    },
+  });
+}
+
 export const bookingsRepository = {
   createBooking,
   getBooking,
+  getBookingByUser,
+  updateBooking,
 };

@@ -40,7 +40,22 @@ async function getBooking(userId: number) {
   return booking;
 }
 
+async function updateBooking(userId: number, bookingId: number, roomId: number): Promise<Booking> {
+  await verifyEnrollmentAndPaidTicket(userId);
+
+  const room = await hotelsRepository.getRoomWithBookings(roomId);
+  if (!room) throw notFoundError();
+
+  if (room.capacity <= room.Booking.length) throw forbiddenError();
+
+  const booking = await bookingsRepository.getBookingByUser(userId, bookingId);
+  if (!booking) throw notFoundError();
+
+  return await bookingsRepository.updateBooking(userId, bookingId, roomId);
+}
+
 export const bookingsService = {
   createBooking,
   getBooking,
+  updateBooking,
 };
