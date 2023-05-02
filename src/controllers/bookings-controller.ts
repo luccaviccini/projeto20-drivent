@@ -33,7 +33,7 @@ export async function updateBooking(req: AuthenticatedRequest, res: Response, ne
 
   try {
     const { id } = await bookingsService.updateBooking(userId, Number(bookingId), roomId);
-    res.status(httpStatus.OK).send({ bookingId: id });
+    return res.status(httpStatus.OK).send({ bookingId: id });
   } catch (err) {
     next(err);
   }
